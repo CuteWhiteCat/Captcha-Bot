@@ -23,6 +23,7 @@ npm install
 * [設置 MongoDB Database 教學](https://www.youtube.com/watch?v=-Wf8E6RRuXA)
 
 ## 🔧 Settings
+* 檔案位於 **Structures/config.json**
 ```json
 {
     "Token": "", 
