@@ -7,7 +7,7 @@
 [![](https://img.shields.io/badge/Discord.js-13.6.0-blue.svg?logo=npm)](https://github.com/discordjs)
 [![](https://img.shields.io/badge/Mongoose-6.1.3-blue.svg?logo=npm)](https://github.com/Automattic/mongoose)
 
-> ### 使用 [Discord.js](https://github.com/discordjs/discord.js) 和 [Mongoose](=https://mongoosejs.com/docs/api.html) 所做成的 Discord 認證機器人
+> ### 使用 [Discord.js](https://github.com/discordjs/discord.js) 和 [Mongoose](https://mongoosejs.com/docs/api.html) 所做成的 Discord 認證機器人
 </div>  
 
 
