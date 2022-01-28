@@ -10,6 +10,10 @@
 > ### 使用 [Discord.js](https://github.com/discordjs/discord.js) 和 [Mongoose](https://mongoosejs.com/docs/api.html) 所做成的 Discord 認證機器人
 </div>  
 
+## 🖥️ Requirements
+1. Node.js >= v14.0.0
+2. Git ( 也可不用 )
+3. Discord
 
 ## 🚀 Getting Started
 ### 安裝機器人檔案
