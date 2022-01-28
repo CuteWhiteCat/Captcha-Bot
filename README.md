@@ -11,7 +11,7 @@
 </div>  
 
 ## 🖥️ Requirements
-1. Node.js >= v14.0.0
+1. Node.js >= v17.3.0
 2. Git ( 也可不用 )
 3. Discord
 
