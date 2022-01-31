@@ -32,11 +32,15 @@ module.exports = {
      */
 
     async execute(interaction) {
+        // 簡化 Code
         const { guild, options } = interaction;
+
+        // 指令選項
         const Channel = options.getChannel("channel");
         const DefaultRole = options.getRole("default-role");
         const VerifiedRole = options.getRole("verified-role");
 
+        // MongoDB Database 創建
         await DB.findOneAndUpdate(
             { GuildID: guild.id },
             {
@@ -50,8 +54,9 @@ module.exports = {
                 upsert: true,
             }
         );
-
-        interaction.reply({
+        
+        // 成功訊息 (Embed)
+        await interaction.reply({
             embeds: [
                 new MessageEmbed()
                     .setColor("#95CCF5")
