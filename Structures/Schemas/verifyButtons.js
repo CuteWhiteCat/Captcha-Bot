@@ -5,4 +5,5 @@ module.exports = model("CaptchaButtons", new Schema({
     MsgID: String,
     UserID: String,
     Used: Number,
+    Kicked: Number,
 }));

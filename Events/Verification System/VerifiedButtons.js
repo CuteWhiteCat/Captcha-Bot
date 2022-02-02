@@ -30,7 +30,6 @@ module.exports = {
 
         // Database 找使用者
         DB.findOne({ GuildID: guildId, MsgID: message.id }, async (err, data) => {
-
             // Error
             if (err) throw err;
 
@@ -43,15 +42,22 @@ module.exports = {
             // 刪除訊息
             interaction.deleteReply();
 
+            // 顏色
+            const Color_Finder = await SysDB.findOne({ GuildID: guildId });
+            let Captcha_Color = "abcde";
+            if (Color_Finder) {
+                Captcha_Color = Color_Finder.Color;
+            }
+
             // DM 的 對象
             const target = guild.members.cache.get(data.UserID);
 
             // 圖片設定
             const Captcha = new CaptchaGenerator()
                 .setDimension(150, 400)
-                .setCaptcha({ font: "Sans", size: 60, color: "#95CCF5" })
+                .setCaptcha({ font: "Sans", size: 60, color: `${Captcha_Color}` })
                 .setDecoy({ opacity: 0.5 })
-                .setTrace({ color: "#95CCF5" });
+                .setTrace({ color: `${Captcha_Color}` });
 
             // 附件
             const CaptchaAttachment = new MessageAttachment(
@@ -68,7 +74,7 @@ module.exports = {
                     "> 從左到右，輸入帶有顏色的英文符號\n" +
                     "> 忽略其他灰色的符號，並注意大小寫")
                 .setImage("attachment://captcha.png")
-                .setColor('#95CCF5')
+                .setColor(`${Captcha_Color}`)
                 .setFooter({ text: '認證時限 : 60 秒' });
 
             try {
@@ -111,7 +117,7 @@ module.exports = {
                             await m.reply({
                                 embeds: [
                                     new MessageEmbed()
-                                        .setColor("#95CCF5")
+                                        .setColor(`${Captcha_Color}`)
                                         .setDescription(`認證成功 ! 你現在已可以瀏覽 **${guild.name}**`)
                                 ]
                             });
@@ -130,10 +136,22 @@ module.exports = {
                             await m.reply({
                                 embeds: [
                                     new MessageEmbed()
-                                        .setColor("#95CCF5")
+                                        .setColor(`${Captcha_Color}`)
                                         .setDescription(`認證失敗 ! 請重試 !`)
                                 ]
                             });
+
+                            // Kick
+                            const Kicked_Finder = await DB.findOne({ GuildID: guild.id, UserID: user.id })
+                            const Kicked_Times = Kicked_Finder.Kicked;
+                            await DB.findOneAndUpdate({ GuildID: guild.id, UserID: user.id }, {Kicked: parseInt(Kicked_Times + 1)});
+
+                            if (Kicked_Finder.Kicked == 2) {
+                                if (target.kickable) {
+                                    target.kick({ reason: "認證錯誤" });
+                                }
+                                await DB.findOneAndDelete({ GuildID: guildId, MsgID: data.MsgID });
+                            };
 
                             // 使用次數歸零
                             await DB.findOneAndUpdate({ GuildID: guildId, MsgID: data.MsgID }, { Used: 0 })
@@ -167,15 +185,10 @@ module.exports = {
                     embeds: [
                         new MessageEmbed()
                             .setColor("RED")
-                            .setDescription(`<@${user.id}>, 你似乎忘記開啟私訊，請重試 !`)
+                            .setDescription(`<@${user.id}>，你似乎忘記開啟私訊，請重試 !`)
                     ], ephemeral: true
                 });
-                console.log(err);
-            }
-
-
-
-
+            };
         });
     },
 };

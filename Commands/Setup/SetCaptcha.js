@@ -13,6 +13,13 @@ module.exports = {
             required: true,
         },
         {
+
+            name: "color",
+            description: "Captcha 顏色 (請輸入 Hex 編碼)",
+            type: "STRING",
+            required: true,
+        },
+        {
             name: "default-role",
             description: "設定未認證身分組",
             type: "ROLE",
@@ -37,8 +44,18 @@ module.exports = {
 
         // 指令選項
         const Channel = options.getChannel("channel");
+        const Color = options.getString("color");
         const DefaultRole = options.getRole("default-role");
         const VerifiedRole = options.getRole("verified-role");
+
+        // Hex Color Test
+        if (!(/^#[0-9A-F]{6}$/i.test(`${Color}`))) return await interaction.reply({
+            embeds: [
+                new MessageEmbed()
+                    .setColor(`RED`)
+                    .setDescription(`此 **Hex Color** 不存在，請重試`)
+            ], ephemeral: true
+        });
 
         // MongoDB Database 創建
         await DB.findOneAndUpdate(
@@ -46,6 +63,7 @@ module.exports = {
             {
                 GuildID: guild.id,
                 ChannelID: Channel.id,
+                Color: Color,
                 NoneRoleID: DefaultRole.id,
                 VerifiedRoleID: VerifiedRole.id,
             },
@@ -54,13 +72,14 @@ module.exports = {
                 upsert: true,
             }
         );
-        
+
         // 成功訊息 (Embed)
         await interaction.reply({
             embeds: [
                 new MessageEmbed()
-                    .setColor("#95CCF5")
-                    .setDescription(`成功設定 **Captcha系統**`)
+                    .setColor(`${Color}`)
+                    .setTitle(`成功設定 **Captcha系統**`)
+                    .setFooter({ text: "💡 : 請確認此訊息的左側即為你設置的顏色" })
             ], ephemeral: true
         });
 

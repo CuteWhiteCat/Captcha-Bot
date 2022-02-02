@@ -7,7 +7,7 @@ const ButtonDB = require("../../Structures/Schemas/verifyButtons");
 module.exports = {
     name: "verify",
     description: "認證系統 (你不是機器人對ㄅ)",
-    cooldown: 60000,
+    cooldown: 10000,
     /**
      * 
      * @param {CommandInteraction} interaction 
@@ -51,6 +51,9 @@ module.exports = {
             // 判斷時間
             await interaction.deferReply();
 
+            // 顏色
+            const Captcha_Color = data.Color;
+
             // 確認按鈕
             const Buttons = new MessageActionRow();
             Buttons.addComponents(
@@ -63,7 +66,7 @@ module.exports = {
 
             // 確認 Embed
             const Embed = new MessageEmbed()
-                .setColor("#95CCF5")
+                .setColor(`${Captcha_Color}`)
                 .setTitle("點擊按鈕來進行認證")
                 .setDescription("**__💡小提醒__** : **如果你尚未開啟私訊，請開啟!**")
                 .setFooter({ text: `ID: ${user.id} | ${user.username}`, iconURL: user.avatarURL({ dynamic: true }) });
@@ -72,6 +75,11 @@ module.exports = {
             await interaction.editReply({ embeds: [Embed], components: [Buttons] });
 
             const msg = await interaction.fetchReply();
+
+            // Kick 次數
+            var Kicked_Times = 0;
+            const Kicked_Finder = await ButtonDB.findOne({ GuildID: guild.id, UserID: user.id, })
+            if (Kicked_Finder) Kicked_Times = parseInt(Kicked_Finder.Kicked);
 
             // MongoDB Database 創建
             await ButtonDB.findOneAndUpdate(
@@ -84,6 +92,7 @@ module.exports = {
                     MsgID: msg.id,
                     UserID: user.id,
                     Used: 0,
+                    Kicked: Kicked_Times,
                 },
                 {
                     upsert: true,
