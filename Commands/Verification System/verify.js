@@ -24,7 +24,7 @@ module.exports = {
 
             // 尚未設定 Captcha 系統    
             if (!data)
-                return interaction.reply({
+                return await interaction.reply({
                     embeds: [
                         new MessageEmbed()
                             .setColor("RED")
@@ -51,9 +51,6 @@ module.exports = {
             // 判斷時間
             await interaction.deferReply();
 
-            // 顏色
-            const Captcha_Color = data.Color;
-
             // 確認按鈕
             const Buttons = new MessageActionRow();
             Buttons.addComponents(
@@ -64,6 +61,8 @@ module.exports = {
                     .setEmoji("📝"),
             );
 
+             // 顏色
+            const Captcha_Color = await data.Color;
             // 確認 Embed
             const Embed = new MessageEmbed()
                 .setColor(`${Captcha_Color}`)
